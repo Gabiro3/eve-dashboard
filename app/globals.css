@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+  --background: 350 100% 97%; /* #feebed */
+  --foreground: 340 100% 30%; /* Slightly darker pink, adjusted for readability */
+  --card: 0 0% 100%;
+  --card-foreground: 340 100% 30%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 340 100% 30%;
+
+  --primary: 344 100% 67%; /* #ff5a7d */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 350 100% 97%; /* #feebed */
+  --secondary-foreground: 340 100% 30%;
+
+  --muted: 0 0% 90%; /* soft gray background for inputs, etc */
+  --muted-foreground: 0 0% 50%; /* #b1b2b2 */
+
+  --accent: 344 100% 67%; /* same as primary */
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 15 34% 51%; /* #a56957 */
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 0 0% 85%; /* light gray */
+  --input: 0 0% 85%;
+  --ring: 344 100% 67%; /* match primary ring color */
+
+  --radius: 0.5rem;
+}
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Loading animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Utility classes */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
