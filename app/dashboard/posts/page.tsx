@@ -48,13 +48,13 @@ export default function PostsPage() {
     try {
       let query = supabase.from("articles").select(`
           *,
-          author:doctors(name, title),
+          author:admin_users(name, role, profile_image_url),
           category:article_categories(name)
         `)
 
       // Filter based on user role
       if (userProfile.role === "writer") {
-        query = query.eq("author_id", userProfile.doctor_id)
+        query = query.eq("author_id", userProfile.id)
       }
 
       const { data, error } = await query.order("created_at", { ascending: false })
@@ -67,7 +67,7 @@ export default function PostsPage() {
   }
 
   const handleEditPost = (post: any) => {
-    router.push(`/dashboard/posts/edit/${post.id}`)
+    router.push(`/dashboard/posts/${post.id}/edit`)
   }
 
   const handleDeletePost = async (postId: string) => {

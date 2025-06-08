@@ -103,12 +103,12 @@ const handleLogout = async () => {
               <Button variant="ghost" className="relative h-10 w-auto px-2">
                 <div className="flex items-center space-x-3">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.profile_image_url || "/logo.png"} alt={user.name} />
-                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                    <AvatarImage src={ "/logo.png"} alt={user.name} />
+                    <AvatarFallback>{getInitials(user.name ?? "User")}</AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col items-start">
-                    <span className="text-sm font-medium">{user.name}</span>
-                    <Badge variant="secondary" className={cn("text-xs", getRoleBadgeColor(user.role))}>
+                    <span className="text-sm font-medium">{user.name ?? "User"}</span>
+                    <Badge variant="secondary" className={cn("text-xs", getRoleBadgeColor(user.role ?? "writer"))}>
                       {user.role}
                     </Badge>
                   </div>

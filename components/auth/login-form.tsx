@@ -75,7 +75,7 @@ export function LoginForm() {
       // Successful login
       toast({
         title: "Login successful",
-        description: `Welcome back, ${adminUser.name}!`,
+        description: `Welcome back!`,
         variant: "default",
       })
 

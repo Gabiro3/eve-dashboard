@@ -11,10 +11,14 @@ import { UserGrowthChart } from "@/components/dashboard/user-growth-chart"
 import { supabase } from "@/lib/supabase"
 import { useToast } from "@/components/ui/use-toast"
 import { startOfMonth, subMonths, format } from "date-fns"
+import { RecentPosts } from "@/components/dashboard/recent-posts"
+import { UserRegistrationChart } from "@/components/dashboard/user-registration-chart"
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [recentPosts, setRecentPosts] = useState<any[]>([])
+  const [userRegistrationData, setUserRegistrationData] = useState<{ date: string; count: number }[]>([])
   interface DashboardStats {
     totalUsers: number;
     totalArticles: number;
@@ -223,6 +227,64 @@ export default function DashboardPage() {
     return monthlyData
   }
 
+  const loadRecentPosts = async () => {
+    try {
+      let query = supabase
+        .from("articles")
+        .select(`
+          *,
+          author:doctors(name, title, profile_image_url),
+          category:article_categories(name)
+        `)
+        .order("created_at", { ascending: false })
+        .limit(5)
+
+      // Filter based on user role
+      if (user?.role === "writer") {
+        query = query.eq("author_id", user.doctor_id)
+      }
+
+      const { data, error } = await query
+
+      if (error) throw error
+      setRecentPosts(data || [])
+    } catch (error) {
+      console.error("Error loading recent posts:", error)
+    }
+  }
+
+  const loadUserRegistrationData = async () => {
+    try {
+      // Get user registrations for the last 30 days
+      const thirtyDaysAgo = new Date()
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+      const { data, error } = await supabase
+        .from("admin_users")
+        .select("created_at")
+        .gte("created_at", thirtyDaysAgo.toISOString())
+        .order("created_at", { ascending: true })
+
+      if (error) throw error
+
+      // Group by date
+      const registrationsByDate = (data || []).reduce((acc: Record<string, number>, user) => {
+        const date = new Date(user.created_at).toISOString().split("T")[0]
+        acc[date] = (acc[date] || 0) + 1
+        return acc
+      }, {})
+
+      // Convert to array format
+      const registrationData = Object.entries(registrationsByDate).map(([date, count]) => ({
+        date,
+        count,
+      }))
+
+      setUserRegistrationData(registrationData)
+    } catch (error) {
+      console.error("Error loading user registration data:", error)
+    }
+  }
   // Helper function to calculate trend percentage
   const calculateTrend = (values: number[]) => {
     if (values.length < 2) return 0
@@ -270,10 +332,15 @@ export default function DashboardPage() {
             <OverviewStats userRole={user.role} stats={stats} />
 
             {/* Charts and Activity */}
-            <div className="grid gap-6 md:grid-cols-3 mb-6">
-              <TrafficChart data={trafficData} title="Traffic Stats" description="Page views over the last 6 months" />
-              <RecentActivity activities={activities} userRole={user.role} />
-            </div>
+            <div className="grid gap-6 md:grid-cols-3">
+            <UserRegistrationChart
+              data={userRegistrationData}
+              title="User Registrations"
+              description="New admin user registrations over time"
+              period="30d"
+            />
+            <RecentPosts posts={recentPosts} userRole={user?.role || "writer"} />
+          </div>
             
             {/* User Growth Chart */}
             <UserGrowthChart 

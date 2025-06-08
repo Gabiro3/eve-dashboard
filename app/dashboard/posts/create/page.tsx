@@ -130,12 +130,12 @@ export default function CreatePostPage() {
         const filePath = `articles/${fileName}`
         
         const { error: uploadError } = await supabase.storage
-          .from('public')
+          .from('articles')
           .upload(filePath, coverImage)
           
         if (uploadError) throw uploadError
         
-        const { data } = supabase.storage.from('public').getPublicUrl(filePath)
+        const { data } = supabase.storage.from('articles').getPublicUrl(filePath)
         coverImageUrl = data.publicUrl
       }
       

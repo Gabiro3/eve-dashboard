@@ -26,6 +26,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Switch } from "@/components/ui/switch"
 import Image from "next/image"
+import { DonationCauseDialog } from "./donation-cause-dialog"
 
 interface DonationListProps {
   donations: Donation[]
@@ -178,99 +179,20 @@ export function DonationList({ donations, userRole, onCreate, onUpdate, onDelete
               <CardTitle>Donation Causes</CardTitle>
               <CardDescription>Manage fundraising campaigns and donation causes</CardDescription>
             </div>
-            {(userRole === "admin") && (
-              <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create Cause
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[600px]">
-                  <DialogHeader>
-                    <DialogTitle>Create New Donation Cause</DialogTitle>
-                    <DialogDescription>Add a new fundraising campaign or donation cause</DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="title" className="text-right">
-                        Title
-                      </Label>
-                      <Input
-                        id="title"
-                        value={newDonation.title}
-                        onChange={(e) => setNewDonation({ ...newDonation, title: e.target.value })}
-                        className="col-span-3"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="description" className="text-right">
-                        Description
-                      </Label>
-                      <Textarea
-                        id="description"
-                        value={newDonation.description}
-                        onChange={(e) => setNewDonation({ ...newDonation, description: e.target.value })}
-                        className="col-span-3"
-                        rows={3}
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="image" className="text-right">
-                        Cover Image
-                      </Label>
-                      <Input
-                        id="image"
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                        className="col-span-3"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="impactDetails" className="text-right">
-                        Impact Details
-                      </Label>
-                      <Textarea
-                        id="impactDetails"
-                        value={newDonation.impactDetails}
-                        onChange={(e) => setNewDonation({ ...newDonation, impactDetails: e.target.value })}
-                        className="col-span-3"
-                        rows={3}
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="fundraisingGoal" className="text-right">
-                        Fundraising Goal
-                      </Label>
-                      <Input
-                        id="fundraisingGoal"
-                        type="number"
-                        value={newDonation.fundraisingGoal}
-                        onChange={(e) => setNewDonation({ ...newDonation, fundraisingGoal: parseFloat(e.target.value) })}
-                        className="col-span-3"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="targetDate" className="text-right">
-                        Target Date
-                      </Label>
-                      <Input
-                        id="targetDate"
-                        type="date"
-                        value={newDonation.targetDate}
-                        onChange={(e) => setNewDonation({ ...newDonation, targetDate: e.target.value })}
-                        className="col-span-3"
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setShowCreateDialog(false)}>Cancel</Button>
-                    <Button onClick={handleCreateDonation}>Create Cause</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            )}
+            {userRole === "admin" && (
+  <DonationCauseDialog
+    onSuccess={() => {
+      setShowCreateDialog(false)
+      resetNewDonation()
+    }}
+    trigger={
+      <Button>
+        <Plus className="mr-2 h-4 w-4" />
+        Create Cause
+      </Button>
+    }
+  />
+)}
           </div>
         </CardHeader>
         <CardContent>
