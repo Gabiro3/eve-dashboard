@@ -107,7 +107,7 @@ export class DonationService {
 
       return data?.map((cause) => ({
         ...cause,
-        progress_percentage: Math.min(((cause.current_amount || 0) / cause.fundraising_goal) * 100, 100),
+        progress_percentage: Math.min(((cause.current_amount || 0) / cause.target_amount) * 100, 100),
       }))
     },
     ["active-causes-progress"],

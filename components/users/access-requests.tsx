@@ -20,7 +20,7 @@ import { MoreHorizontal, Search, CheckCircle, XCircle, Eye } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { formatDistanceToNow } from "date-fns"
 import { supabase } from "@/lib/supabase"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 
 interface AccessRequest {
   id: string
@@ -127,7 +127,7 @@ export function AccessRequests() {
       }
 
       // 3. Create user profile
-      const { error: userError } = await supabase.from("users").insert({
+      const { error: userError } = await supabase.from("admin_users").insert({
         id: authUser.user.id,
         email: selectedRequest.email,
         name: selectedRequest.name,

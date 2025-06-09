@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Sidebar } from "@/components/layout/sidebar"
 import { Header } from "@/components/layout/header"
 import { supabase } from "@/lib/supabase"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { DonationList } from "@/components/donations/donation-list"
 import { Donation } from "@/components/donations/types"
 

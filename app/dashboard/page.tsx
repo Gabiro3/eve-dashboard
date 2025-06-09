@@ -9,7 +9,7 @@ import { TrafficChart } from "@/components/dashboard/traffic-chart"
 import { RecentActivity } from "@/components/dashboard/recent-activity"
 import { UserGrowthChart } from "@/components/dashboard/user-growth-chart"
 import { supabase } from "@/lib/supabase"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { startOfMonth, subMonths, format } from "date-fns"
 import { RecentPosts } from "@/components/dashboard/recent-posts"
 import { UserRegistrationChart } from "@/components/dashboard/user-registration-chart"
@@ -49,6 +49,8 @@ export default function DashboardPage() {
 
   useEffect(() => {
     checkUser()
+    loadRecentPosts()
+    loadUserRegistrationData()
 
     // Check for success message in URL
     const successMessage = searchParams.get("success")
@@ -233,7 +235,7 @@ export default function DashboardPage() {
         .from("articles")
         .select(`
           *,
-          author:doctors(name, title, profile_image_url),
+          author:admin_users(name, role),
           category:article_categories(name)
         `)
         .order("created_at", { ascending: false })
@@ -260,7 +262,7 @@ export default function DashboardPage() {
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
       const { data, error } = await supabase
-        .from("admin_users")
+        .from("users")
         .select("created_at")
         .gte("created_at", thirtyDaysAgo.toISOString())
         .order("created_at", { ascending: true })

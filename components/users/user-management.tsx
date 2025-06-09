@@ -270,7 +270,6 @@ export function UserManagement({ users, onCreateUser, onUpdateUser, onDeleteUser
                   <TableCell>
                     <div className="flex items-center space-x-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={user.profile_image_url || "/placeholder.svg"} />
                         <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                       </Avatar>
                       <div>

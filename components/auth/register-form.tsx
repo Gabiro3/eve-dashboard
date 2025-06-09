@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Mail, User, Phone, FileText } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import Image from "next/image"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 
 export function RegisterForm() {
   const [formData, setFormData] = useState({

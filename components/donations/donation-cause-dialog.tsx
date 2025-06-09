@@ -24,7 +24,7 @@ import { CalendarIcon, X, Loader2, Plus, Heart } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { supabase } from "@/lib/supabase"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 
 interface DonationCauseFormData {
   title: string

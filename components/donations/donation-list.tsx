@@ -59,7 +59,7 @@ export function DonationList({ donations, userRole, onCreate, onUpdate, onDelete
     title: "",
     description: "",
     impact_details: "",
-    fundraising_goal: 0,
+    target_amount: 0,
     target_date: "",
     is_active: true
   })
@@ -98,8 +98,8 @@ export function DonationList({ donations, userRole, onCreate, onUpdate, onDelete
       title: donation.title,
       description: donation.description,
       impact_details: donation.impact_details,
-      fundraising_goal: donation.fundraising_goal,
-      target_date: donation.target_date.split("T")[0],
+      target_amount: donation.target_amount,
+      target_date: donation.end_date.split("T")[0],
       is_active: donation.is_active
     })
     setShowEditDialog(true)
@@ -240,13 +240,13 @@ export function DonationList({ donations, userRole, onCreate, onUpdate, onDelete
                       <TableCell className="font-medium">{donation.title}</TableCell>
                       <TableCell>
                         <div className="space-y-1">
-                          <Progress value={getProgressPercentage(donation.current_amount, donation.fundraising_goal)} />
+                          <Progress value={getProgressPercentage(donation.current_amount, donation.target_amount)} />
                           <div className="text-xs text-muted-foreground">
-                            {formatCurrency(donation.current_amount)} of {formatCurrency(donation.fundraising_goal)}
+                            {formatCurrency(donation.current_amount)} of {formatCurrency(donation.target_amount)}
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>{format(new Date(donation.target_date), 'MMM d, yyyy')}</TableCell>
+                      <TableCell>{format(new Date(donation.end_date), 'MMM d, yyyy')}</TableCell>
                       <TableCell>
                         <Badge variant={donation.is_active ? "default" : "secondary"}>
                           {donation.is_active ? "Active" : "Inactive"}
@@ -334,10 +334,10 @@ export function DonationList({ donations, userRole, onCreate, onUpdate, onDelete
               
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">Fundraising Progress</h3>
-                <Progress value={getProgressPercentage(selectedDonation.current_amount, selectedDonation.fundraising_goal)} />
+                <Progress value={getProgressPercentage(selectedDonation.current_amount, selectedDonation.target_amount)} />
                 <div className="flex justify-between text-sm">
                   <span>{formatCurrency(selectedDonation.current_amount)}</span>
-                  <span className="text-muted-foreground">Goal: {formatCurrency(selectedDonation.fundraising_goal)}</span>
+                  <span className="text-muted-foreground">Goal: {formatCurrency(selectedDonation.target_amount)}</span>
                 </div>
               </div>
               
@@ -345,7 +345,7 @@ export function DonationList({ donations, userRole, onCreate, onUpdate, onDelete
                 <div>
                   <h3 className="text-sm font-medium">Target Date</h3>
                   <p className="text-sm text-muted-foreground">
-                    {format(new Date(selectedDonation.target_date), 'MMMM d, yyyy')}
+                    {format(new Date(selectedDonation.end_date), 'MMMM d, yyyy')}
                   </p>
                 </div>
                 <div>
@@ -432,8 +432,8 @@ export function DonationList({ donations, userRole, onCreate, onUpdate, onDelete
               <Input
                 id="edit-fundraisingGoal"
                 type="number"
-                value={editDonation.fundraising_goal}
-                onChange={(e) => setEditDonation({ ...editDonation, fundraising_goal: parseFloat(e.target.value) })}
+                value={editDonation.target_amount}
+                onChange={(e) => setEditDonation({ ...editDonation, target_amount: parseFloat(e.target.value) })}
                 className="col-span-3"
               />
             </div>
@@ -518,7 +518,7 @@ export function DonationList({ donations, userRole, onCreate, onUpdate, onDelete
               </div>
               {selectedDonation && (
                 <div className="text-sm text-muted-foreground">
-                  Fundraising Goal: {formatCurrency(selectedDonation.fundraising_goal)}
+                  Fundraising Goal: {formatCurrency(selectedDonation.target_amount)}
                 </div>
               )}
             </div>

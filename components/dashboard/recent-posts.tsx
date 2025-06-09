@@ -64,8 +64,8 @@ export function RecentPosts({ posts, userRole }: RecentPostsProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Recent Blog Posts</CardTitle>
-            <CardDescription>Latest articles and content updates</CardDescription>
+            <CardTitle>Recent Blogs</CardTitle>
+            <CardDescription>Latest articles</CardDescription>
           </div>
           <Button variant="outline" size="sm" asChild>
             <Link href="/dashboard/posts">
@@ -93,10 +93,6 @@ export function RecentPosts({ posts, userRole }: RecentPostsProps) {
                 key={post.id}
                 className="flex items-start space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors"
               >
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={post.author.profile_image_url || "/placeholder.svg"} />
-                  <AvatarFallback className="text-xs">{getInitials(post.author.name)}</AvatarFallback>
-                </Avatar>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between">
@@ -113,10 +109,11 @@ export function RecentPosts({ posts, userRole }: RecentPostsProps) {
                           <User className="h-3 w-3 mr-1" />
                           {post.author.name}
                         </div>
-                        <div className="flex items-center text-xs text-gray-500">
-                          <Clock className="h-3 w-3 mr-1" />
-                          {post.estimated_read_time} min read
-                        </div>
+                        <div className="flex items-center text-xs text-gray-500 whitespace-nowrap">
+  <Clock className="h-3 w-3 mr-1" />
+  <span>{post.estimated_read_time} min read</span>
+</div>
+
                         <div className="flex items-center text-xs text-gray-500">
                           <Eye className="h-3 w-3 mr-1" />
                           {post.read_count}

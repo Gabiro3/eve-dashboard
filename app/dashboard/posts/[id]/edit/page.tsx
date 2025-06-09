@@ -16,7 +16,7 @@ import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Save, Eye, X, Loader2 } from "lucide-react"
 import { supabase } from "@/lib/supabase"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
 
 interface PostFormData {
@@ -54,16 +54,44 @@ export default function EditPostPage() {
 
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
+  const { id } = useParams() as { id: string }
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [tagInput, setTagInput] = useState("")
   const [originalPost, setOriginalPost] = useState<any>(null)
+  const checkUser = async () => {
+        try {
+          const {
+            data: { user: authUser },
+          } = await supabase.auth.getUser()
+    
+          if (!authUser) {
+            router.push("/login")
+            return
+          }
+  
+          const { data: profile, error } = await supabase
+            .from("admin_users")
+            .select(`
+              *`)
+            .eq("id", authUser.id)
+            .single()
+    
+          if (profile) {
+            setUser(profile)
+          }
+        } catch (error) {
+          console.error("Error checking user:", error)
+          router.push("/login")
+        } finally {
+          setLoading(false)
+        }
+      }
 
   useEffect(() => {
+    checkUser()
     loadCategories()
-    if (params.id) {
-      loadPost(params.id as string)
-    }
+    loadPost(id)
   }, [params.id])
 
   const loadPost = async (postId: string) => {
@@ -82,18 +110,8 @@ export default function EditPostPage() {
         return
       }
 
-      // Check permissions
-      if (user?.role !== "admin" && data.author_id !== user?.doctor_id) {
-        toast({
-          title: "Access Denied",
-          description: "You don't have permission to edit this post",
-          variant: "destructive",
-        })
-        router.push("/dashboard/posts")
-        return
-      }
-
       setOriginalPost(data)
+      console.log("Loaded post data:", data)
       setFormData({
         title: data.title || "",
         content: data.content || "",
@@ -137,13 +155,13 @@ export default function EditPostPage() {
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
       const filePath = `articles/${fileName}`
 
-      const { error: uploadError } = await supabase.storage.from("uploads").upload(filePath, file)
+      const { error: uploadError } = await supabase.storage.from("articles").upload(filePath, file)
 
       if (uploadError) throw uploadError
 
       const {
         data: { publicUrl },
-      } = supabase.storage.from("uploads").getPublicUrl(filePath)
+      } = supabase.storage.from("articles").getPublicUrl(filePath)
 
       setFormData((prev) => ({ ...prev, featured_image_url: publicUrl }))
 
@@ -207,7 +225,7 @@ export default function EditPostPage() {
         title: formData.title.trim(),
         content: formData.content,
         excerpt,
-        featured_image_url: formData.featured_image_url || null,
+        cover_image: formData.featured_image_url || null,
         category_id: formData.category_id,
         is_featured: formData.is_featured,
         tags: formData.tags,
@@ -307,7 +325,7 @@ export default function EditPostPage() {
                             id="title"
                             value={formData.title}
                             onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-                            placeholder="Enter post title"
+                            placeholder={originalPost.title || "Enter post title"}
                             required
                           />
                         </div>

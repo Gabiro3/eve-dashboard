@@ -66,10 +66,9 @@ export default function UsersPage() {
   const loadUsers = async () => {
     try {
       const { data, error } = await supabase
-        .from("users")
+        .from("admin_users")
         .select(`
-          *,
-        `)
+          *`)
         .order("created_at", { ascending: false })
 
       if (error) throw error
@@ -79,7 +78,7 @@ export default function UsersPage() {
         id: user.id,
         name: user.full_name || user.name || '',
         email: user.email || '',
-        role: user.role || 'writer',
+        role: user.role || 'App user',
         is_active: user.is_active !== undefined ? user.is_active : true,
         created_at: user.created_at || new Date().toISOString(),
         updated_at: user.updated_at,

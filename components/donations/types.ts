@@ -4,9 +4,9 @@ export interface Donation {
   description: string
   background_image_url: string | null
   impact_details: string
-  fundraising_goal: number
+  target_amount: number
   current_amount: number
-  target_date: string
+  end_date: string
   is_active: boolean
   created_by: string
   created_at: string
@@ -28,7 +28,7 @@ export interface DonationUpdateData {
   imageFile?: File
   background_image_url?: string | null
   impact_details?: string
-  fundraising_goal?: number
+  target_amount?: number
   current_amount?: number
   target_date?: string
   is_active?: boolean
