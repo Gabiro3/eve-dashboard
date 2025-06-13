@@ -1,10 +1,11 @@
-import { supabaseAdmin } from "@/lib/supabase"
 import { createCachedFunction, CACHE_TAGS, CACHE_DURATIONS, invalidateCache } from "@/lib/cache"
 import type { Database } from "@/types/database"
+import { getSupabaseClient } from "@/lib/supabase-client"
 
 type Article = Database["public"]["Tables"]["articles"]["Row"]
 type ArticleInsert = Database["public"]["Tables"]["articles"]["Insert"]
 type ArticleUpdate = Database["public"]["Tables"]["articles"]["Update"]
+const supabase = getSupabaseClient()
 
 export class ArticleService {
   // Get articles with caching
@@ -18,11 +19,11 @@ export class ArticleService {
         offset?: number
       } = {},
     ) => {
-      let query = supabaseAdmin
+      let query = supabase
         .from("articles")
         .select(`
           *,
-          author:doctors(name, title, specialization),
+          author:admin_users(name, role),
           category:article_categories(name, requires_doctor_review)
         `)
         .order("created_at", { ascending: false })
@@ -58,7 +59,7 @@ export class ArticleService {
     let status: "draft" | "pending_review" = "draft"
 
     if (article.category_id) {
-      const { data: category } = await supabaseAdmin
+      const { data: category } = await supabase
         .from("article_categories")
         .select("requires_doctor_review")
         .eq("id", article.category_id)
@@ -69,7 +70,7 @@ export class ArticleService {
       }
     }
 
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from("articles")
       .insert({
         ...article,
@@ -90,7 +91,7 @@ export class ArticleService {
 
   static async updateArticle(id: string, updates: ArticleUpdate, userId: string, userRole: string) {
     // Check permissions
-    const { data: article } = await supabaseAdmin.from("articles").select("author_id").eq("id", id).single()
+    const { data: article } = await supabase.from("articles").select("author_id").eq("id", id).single()
 
     if (!article) {
       throw new Error("Article not found")
@@ -101,7 +102,7 @@ export class ArticleService {
       throw new Error("Unauthorized")
     }
 
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from("articles")
       .update({
         ...updates,
@@ -118,7 +119,7 @@ export class ArticleService {
   }
 
   static async reviewArticle(id: string, status: "approved" | "rejected", reviewNotes: string, reviewerId: string) {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from("articles")
       .update({
         status,
@@ -139,7 +140,7 @@ export class ArticleService {
 
   static async deleteArticle(id: string, userId: string, userRole: string) {
     // Check permissions
-    const { data: article } = await supabaseAdmin.from("articles").select("author_id").eq("id", id).single()
+    const { data: article } = await supabase.from("articles").select("author_id").eq("id", id).single()
 
     if (!article) {
       throw new Error("Article not found")
@@ -149,7 +150,7 @@ export class ArticleService {
       throw new Error("Unauthorized")
     }
 
-    const { error } = await supabaseAdmin.from("articles").delete().eq("id", id)
+    const { error } = await supabase.from("articles").delete().eq("id", id)
 
     if (error) throw error
 
@@ -165,7 +166,7 @@ export class ArticleService {
   // Get pending reviews for doctors
   static getPendingReviews = createCachedFunction(
     async () => {
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await supabase
         .from("articles")
         .select(`
           *,
@@ -179,6 +180,191 @@ export class ArticleService {
       return data
     },
     ["pending-reviews"],
+    [CACHE_TAGS.ARTICLES],
+    CACHE_DURATIONS.SHORT,
+  )
+
+  static getPublishedArticles = createCachedFunction(
+    async (
+      filters: {
+        category_id?: string
+        limit?: number
+        offset?: number
+      } = {},
+    ) => {
+      let query = supabase
+        .from("articles")
+        .select(`
+        *,
+        author:admin_users(name, role, profile_image_url),
+        category:article_categories(name)
+      `)
+        .eq("is_published", true)
+        .eq("status", "approved")
+        .order("created_at", { ascending: false })
+
+      if (filters.category_id) {
+        query = query.eq("category_id", filters.category_id)
+      }
+      if (filters.limit) {
+        query = query.limit(filters.limit)
+      }
+      if (filters.offset) {
+        query = query.range(filters.offset, filters.offset + (filters.limit || 10) - 1)
+      }
+
+      const { data, error } = await query
+
+      if (error) throw error
+      return data
+    },
+    ["published-articles"],
+    [CACHE_TAGS.ARTICLES],
+    CACHE_DURATIONS.SHORT,
+  )
+
+  static getFeaturedArticle = createCachedFunction(
+    async () => {
+      const { data, error } = await supabase
+        .from("articles")
+        .select(`
+        *,
+        author:admin_users(name, role, profile_image_url),
+        category:article_categories(name)
+      `)
+        .eq("is_published", true)
+        .eq("status", "approved")
+        .eq("is_featured", true)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single()
+
+      if (error) {
+        // If no featured article, get the most recent published article
+        const { data: fallback, error: fallbackError } = await supabase
+          .from("articles")
+          .select(`
+          *,
+          author:doctors(name, title, profile_image_url),
+          category:article_categories(name)
+        `)
+          .eq("is_published", true)
+          .eq("status", "approved")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .single()
+
+        if (fallbackError) throw fallbackError
+        return fallback
+      }
+      return data
+    },
+    ["featured-article"],
+    [CACHE_TAGS.ARTICLES],
+    CACHE_DURATIONS.SHORT,
+  )
+
+  static getArticleBySlug = createCachedFunction(
+    async (id: string) => {
+      const { data, error } = await supabase
+        .from("articles")
+        .select(`
+        *,
+        author:admin_users(name, role, profile_image_url),
+        category:article_categories(name)
+      `)
+        .eq("id", id)
+        .eq("is_published", true)
+        .eq("status", "approved")
+        .single()
+      if (error) return null
+      return data
+    },
+    ["article-by-slug"],
+    [CACHE_TAGS.ARTICLES],
+    CACHE_DURATIONS.MEDIUM,
+  )
+  static getArticleById = createCachedFunction(
+    async (id: string) => {
+      const { data, error } = await supabase
+        .from("articles")
+        .select(`
+        *,
+        author:admin_users(name, role, profile_image_url),
+        category:article_categories(name)
+      `)
+        .eq("id", id)
+        .eq("is_published", true)
+        .eq("status", "approved")
+        .single()
+      console.log(id)
+
+      if (error) return null
+      return data
+    },
+    ["article-by-id"],
+    [CACHE_TAGS.ARTICLES],
+    CACHE_DURATIONS.MEDIUM,
+  )
+
+  static async incrementViewCount(articleId: string) {
+    // Fetch current read_count
+    const { data: article, error: fetchError } = await supabase
+      .from("articles")
+      .select("read_count")
+      .eq("id", articleId)
+      .single()
+
+    if (fetchError) throw fetchError
+
+    const newReadCount = (article?.read_count || 0) + 1
+
+    const { error: updateError } = await supabase
+      .from("articles")
+      .update({ read_count: newReadCount })
+      .eq("id", articleId)
+
+    if (updateError) throw updateError
+
+    // Invalidate cache
+    await invalidateCache([CACHE_TAGS.ARTICLES])
+  }
+  static async incrementViewCountAction(articleId: string) {
+    const { data: article, error } = await supabase
+      .from("articles")
+      .select("read_count")
+      .eq("id", articleId)
+      .single()
+
+
+    return { article, error }
+  }
+
+  static getRelatedArticles = createCachedFunction(
+    async (articleId: string, categoryId: string | null, limit = 4) => {
+      let query = supabase
+        .from("articles")
+        .select(`
+        *,
+        category:article_categories(name)
+      `)
+        .eq("is_published", true)
+        .eq("status", "approved")
+        .neq("id", articleId)
+        .order("created_at", { ascending: false })
+        .limit(limit)
+
+      // Prefer articles from the same category
+      if (categoryId) {
+        query = query.eq("category_id", categoryId)
+      }
+
+      const { data, error } = await query
+
+      if (error) throw error
+      return data
+    },
+    ["related-articles"],
     [CACHE_TAGS.ARTICLES],
     CACHE_DURATIONS.SHORT,
   )

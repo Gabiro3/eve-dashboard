@@ -85,9 +85,6 @@ export function Sidebar({ userRole }: SidebarProps) {
             <span className="ml-2 font-semibold text-gray-900">Eve Health</span>
           </div>
         )}
-        <Button variant="ghost" size="sm" onClick={() => setCollapsed(!collapsed)} className="h-8 w-8 p-0">
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </Button>
       </div>
 
       {/* Navigation */}

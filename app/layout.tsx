@@ -7,10 +7,12 @@ import { Toaster } from "@/components/ui/toaster"
 const quicksand = Quicksand({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Eve Health Admin Dashboard",
-  description: "Admin dashboard for Eve Health reproductive health platform",
-  keywords: ["healthcare", "reproductive health", "admin dashboard"],
-    generator: 'v0.dev'
+  title: "Eve Blogs | Learn about women reproductive health and wellness",
+  description: "Our collection of learning resources about women's reproductive health and wellness.",
+  keywords: ["reproductive health", "women's health", "health education", "wellness", "Eve Blogs"],
+  icons: {
+    icon: "/logo.png", // This sets your favicon
+  },
 }
 
 export default function RootLayout({

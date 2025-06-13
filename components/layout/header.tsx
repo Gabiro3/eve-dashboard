@@ -28,9 +28,10 @@ interface HeaderProps {
     profile_image_url?: string
     [key: string]: any
   }
+  onMenuClick?: () => void
 }
 
-export function Header({ user }: HeaderProps) {
+export function Header({ user, onMenuClick }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const router = useRouter()
 
@@ -76,6 +77,22 @@ const handleLogout = async () => {
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
+        {/* Mobile menu button */}
+        <div className="md:hidden mr-2">
+          <Button variant="ghost" size="icon" onClick={onMenuClick}>
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </Button>
+        </div>
+      </div>
+      <div className="flex items-center justify-between">
         {/* Search */}
         <div className="flex-1 max-w-md">
           <div className="relative">
@@ -103,13 +120,13 @@ const handleLogout = async () => {
               <Button variant="ghost" className="relative h-10 w-auto px-2">
                 <div className="flex items-center space-x-3">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={ "/logo.png"} alt={user.name} />
-                    <AvatarFallback>{getInitials(user.name ?? "User")}</AvatarFallback>
+                    <AvatarImage src={ "/logo.png"} alt={user?.name ?? "User"} />
+                    <AvatarFallback>{getInitials(user?.name ?? "User")}</AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col items-start">
-                    <span className="text-sm font-medium">{user.name ?? "User"}</span>
-                    <Badge variant="secondary" className={cn("text-xs", getRoleBadgeColor(user.role ?? "writer"))}>
-                      {user.role}
+                    <span className="text-sm font-medium">{user?.name ?? "User"}</span>
+                    <Badge variant="secondary" className={cn("text-xs", getRoleBadgeColor(user?.role ?? "writer"))}>
+                      {user?.role}
                     </Badge>
                   </div>
                 </div>
