@@ -21,6 +21,7 @@ import {
   ChevronLeft,
   ChevronRight,
   UserPlus,
+  SmileIcon,
 } from "lucide-react"
 
 interface SidebarProps {
@@ -31,6 +32,7 @@ const navigationItems = {
   admin: [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "Blog Posts", href: "/dashboard/posts", icon: FileText },
+    { name: "Quizzes", href: "/dashboard/quizzes", icon: SmileIcon },
     { name: "Dashboard Users", href: "/dashboard/users", icon: Users },
     { name: "Access Requests", href: "/dashboard/access-requests", icon: UserPlus },
     { name: "App Users", href: "/dashboard/app-users", icon: Smartphone },

@@ -42,8 +42,6 @@ export function LoginForm() {
         throw authError
       }
 
-      console.log("Auth successful, session established:", !!authData.session)
-
       // Verify the session was created
       if (!authData.session || !authData.user) {
         throw new Error("Failed to establish session. Please try again.")
@@ -58,11 +56,8 @@ export function LoginForm() {
       // Check if user exists in admin_users table and is active
       const { isAdmin, adminUser, error: adminError } = await verifyAdminAccess(authData.user.id)
 
-      console.log("Admin verification result:", { isAdmin, adminUser })
-
       if (!isAdmin || !adminUser) {
         // If user doesn't have admin access
-        console.error("Admin access verification failed:", adminError)
         await supabase.auth.signOut()
         
         // Import clearAuthData

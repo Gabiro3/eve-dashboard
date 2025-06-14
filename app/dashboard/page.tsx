@@ -35,10 +35,6 @@ export default function DashboardPage() {
 
         if (profile) {
           setUser(profile)
-          toast({
-            title: `Welcome, ${profile.name}`,
-            description: `You're logged in as a ${profile.role}`,
-          })
         }
       } catch (error) {
         toast({

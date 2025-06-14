@@ -110,7 +110,7 @@ export async function verifyAdminAccess(userId: string): Promise<{
       return {
         isAdmin: false,
         adminUser: null,
-        error: error?.message || "User not found in admin_users table",
+        error: "Admin Account not found!",
       }
     }
 
@@ -131,7 +131,7 @@ export async function verifyAdminAccess(userId: string): Promise<{
     return {
       isAdmin: false,
       adminUser: null,
-      error: error.message || "Failed to verify admin access",
+      error: "Failed to verify admin access",
     }
   }
 }
