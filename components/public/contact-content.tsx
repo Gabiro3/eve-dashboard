@@ -11,8 +11,8 @@ export function ContactContent() {
       icon: <Mail className="h-6 w-6 text-pink-500" />,
       title: "Email Us",
       description: "General inquiries and support",
-      contact: "hello@evehealth.com",
-      action: "mailto:hello@evehealth.com",
+      contact: "hello@evehealth.app",
+      action: "mailto:hello@evehealth.app",
     },
     {
       icon: <Phone className="h-6 w-6 text-blue-500" />,
@@ -33,22 +33,22 @@ export function ContactContent() {
   const departments = [
     {
       title: "Editorial Team",
-      email: "editorial@evehealth.com",
+      email: "editorial@evehealth.app",
       description: "Content suggestions, expert contributions, medical reviews",
     },
     {
       title: "Partnerships",
-      email: "partnerships@evehealth.com",
+      email: "partnerships@evehealth.app",
       description: "Business partnerships, collaborations, sponsorships",
     },
     {
       title: "Technical Support",
-      email: "support@evehealth.com",
+      email: "support@evehealth.app",
       description: "Website issues, app problems, account assistance",
     },
     {
       title: "Media Inquiries",
-      email: "media@evehealth.com",
+      email: "media@evehealth.app",
       description: "Press releases, interviews, media kits",
     },
   ]
@@ -153,7 +153,7 @@ export function ContactContent() {
             </Button>
 
             <Button asChild variant="outline" className="w-full justify-start">
-              <a href="mailto:careers@evehealth.com">
+              <a href="mailto:careers@evehealth.app">
                 <Mail className="h-4 w-4 mr-2" />
                 Career Opportunities
               </a>

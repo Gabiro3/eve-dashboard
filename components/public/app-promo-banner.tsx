@@ -18,7 +18,7 @@ export function AppPromoBanner() {
 
           <div className="flex justify-center md:justify-start">
             <a
-              href="https://eve-health-c003c.web.app"
+              href="https://evehealth.app"
               target="_blank"
               rel="noopener noreferrer"
             >

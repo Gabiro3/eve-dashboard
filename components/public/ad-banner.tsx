@@ -2,10 +2,12 @@
 
 import { useState } from "react"
 import { X } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 
 export function AdBanner() {
   const [isVisible, setIsVisible] = useState(true)
+  const router = useRouter()
 
   if (!isVisible) return null
 
@@ -36,7 +38,7 @@ export function AdBanner() {
               Get access to expert-reviewed health articles and personalized wellness tips.
             </p>
 
-            <Button className="bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white">
+            <Button className="bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white" onClick={() => router.push('/contact')}>
               Learn More
             </Button>
           </div>

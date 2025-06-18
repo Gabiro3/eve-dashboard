@@ -157,7 +157,7 @@ export function AdvertiseDialog({ children }: AdvertiseDialogProps) {
                     <Mail className="h-5 w-5" />
                     <div>
                       <p className="font-semibold">Email</p>
-                      <p className="text-sm opacity-90">advertising@evehealth.com</p>
+                      <p className="text-sm opacity-90">advertising@evehealth.app</p>
                     </div>
                   </div>
 
@@ -172,7 +172,7 @@ export function AdvertiseDialog({ children }: AdvertiseDialogProps) {
 
                 <div className="space-y-3">
                   <Button asChild variant="secondary" className="w-full bg-white text-pink-600 hover:bg-gray-100">
-                    <a href="mailto:advertising@evehealth.com?subject=Advertising Inquiry">
+                    <a href="mailto:advertising@evehealth.app?subject=Advertising Inquiry">
                       <Mail className="h-4 w-4 mr-2" />
                       Send Email
                     </a>

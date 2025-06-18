@@ -103,7 +103,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
             <div className="mt-8">
               <ShareButtons
-                url={`${process.env.NEXT_PUBLIC_SITE_URL || "https://evehealth.com"}/articles/${article.id}`}
+                url={`${process.env.NEXT_PUBLIC_SITE_URL || "https://evehealth.app"}/articles/${article.id}`}
                 title={article.title}
               />
             </div>

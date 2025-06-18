@@ -5,39 +5,36 @@ import { CheckCircle, Heart, Users, Globe, Stethoscope } from "lucide-react"
 
 export function AboutContent() {
   const timeline = [
-    {
-      year: "2020",
-      title: "The Beginning",
-      description:
-        "Eve Health was founded with a simple mission: to provide women with accessible, expert-reviewed health information.",
-      icon: "🌱",
-    },
-    {
-      year: "2021",
-      title: "Expert Network",
-      description:
-        "We assembled a team of certified doctors, nutritionists, and health experts to ensure content accuracy.",
-      icon: "👩‍⚕️",
-    },
-    {
-      year: "2022",
-      title: "Community Growth",
-      description: "Reached 100,000 monthly readers and launched our mobile app for better accessibility.",
-      icon: "📱",
-    },
-    {
-      year: "2023",
-      title: "Global Expansion",
-      description: "Expanded our content to serve women in multiple countries with localized health information.",
-      icon: "🌍",
-    },
-    {
-      year: "2024",
-      title: "Innovation & Impact",
-      description: "Launched AI-powered health insights and reached over 1 million women worldwide.",
-      icon: "🚀",
-    },
-  ]
+  {
+    year: "2022",
+    title: "The Idea",
+    description:
+      "Sparked the idea to create a unified reproductive health app for girls and women in Rwanda—focused on accessibility, empowerment, and education.",
+    icon: "💡",
+  },
+  {
+    year: "2023",
+    title: "Grassroots Support",
+    description:
+      "Led high school initiatives to raise money for purchasing sanitary pads for girls in rural areas of Rwanda, promoting dignity and school attendance.",
+    icon: "🌱",
+  },
+  {
+    year: "2024",
+    title: "Awareness & Education",
+    description:
+      "Worked to demystify reproductive health and raise awareness to reduce teen pregnancies through workshops and community engagement.",
+    icon: "📚",
+  },
+  {
+    year: "2025",
+    title: "Eve Health is Born",
+    description:
+      "Eve Health officially launched — a safe digital space where girls and women can learn about reproductive health, understand their bodies, and access wellness tools.",
+    icon: "🌺",
+  },
+];
+
 
   const values = [
     {
@@ -63,10 +60,10 @@ export function AboutContent() {
   ]
 
   const stats = [
-    { number: "1M+", label: "Women Served" },
+    { number: "3M+", label: "Women Targetted" },
     { number: "500+", label: "Expert Articles" },
     { number: "50+", label: "Health Experts" },
-    { number: "25+", label: "Countries Reached" },
+    { number: "1M+", label: "Eve Health Users" },
   ]
 
   return (
@@ -200,7 +197,7 @@ export function AboutContent() {
       </div>
 
       {/* Team Section */}
-      <div className="text-center mb-16">
+      {/* <div className="text-center mb-16">
         <h2 className="text-3xl font-bold text-gray-900 mb-6">Meet Our Expert Team</h2>
         <p className="text-gray-600 max-w-2xl mx-auto mb-8">
           Our content is created and reviewed by a diverse team of healthcare professionals, researchers, and wellness
@@ -240,7 +237,7 @@ export function AboutContent() {
             </Card>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* CTA Section */}
       <div className="text-center bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl p-12 text-white">

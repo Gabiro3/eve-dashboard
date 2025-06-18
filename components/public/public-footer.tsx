@@ -1,5 +1,6 @@
 import { socialLinks } from "@/lib/constants"
 import Link from "next/link"
+import Image from "next/image"
 
 export function PublicFooter() {
   const currentYear = new Date().getFullYear()
@@ -10,9 +11,15 @@ export function PublicFooter() {
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">EH</span>
-              </div>
+              <div className="w-10 h-10 rounded-lg overflow-hidden relative">
+                            <Image
+                              src="/logo.png"
+                              alt="Eve Health Logo"
+                              fill
+                              className="object-contain"
+                              priority
+                            />
+                          </div>
               <span className="font-bold text-xl">Eve Health</span>
             </div>
             <p className="text-gray-400 text-sm">
@@ -92,7 +99,7 @@ export function PublicFooter() {
           <div>
             <h3 className="font-semibold text-lg mb-4">Get in Touch</h3>
             <div className="space-y-2 text-sm text-gray-400">
-              <p>📧 hello@evehealth.com</p>
+              <p>📧 hello@evehealth.app</p>
               <p>📞 +250 781 255 340</p>
               <p>📍 1 KN 78 St, Kigali, Rwanda</p>
             </div>
