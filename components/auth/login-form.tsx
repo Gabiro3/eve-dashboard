@@ -200,7 +200,7 @@ export function LoginForm() {
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <div className="text-2xl font-bold">1000+</div>
-            <div className="text-pink-100">Patients Served</div>
+            <div className="text-pink-100">Women Served</div>
           </div>
           <div>
             <div className="text-2xl font-bold">50+</div>

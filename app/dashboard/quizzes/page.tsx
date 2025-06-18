@@ -267,7 +267,7 @@ export default function QuizzesPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                          <Link href={`/quizzes/${quiz.id}`}>
+                          <Link href={`/dashboard/quizzes/${quiz.id}`}>
                             <Eye className="h-4 w-4 mr-2" />
                             View Quiz
                           </Link>

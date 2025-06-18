@@ -149,7 +149,7 @@ export class QuizService {
       .from("quiz_results")
       .select(`
         *,
-        users(name, email)
+        users(display_name, email)
       `)
       .eq("quiz_id", quizId)
       .order("completed_at", { ascending: false })
