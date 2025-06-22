@@ -9,6 +9,7 @@ interface Article {
   id: string
   title: string
   excerpt: string
+  content: string
   cover_image: string | null
   slug: string
   created_at: string
@@ -73,7 +74,7 @@ export function ArticleGrid({ articles, currentPage, selectedCategory }: Article
                 <Link href={`/articles/${article.id}`}>{article.title}</Link>
               </h3>
 
-              <p className="text-gray-600 text-sm mb-4 line-clamp-3">{article.excerpt}</p>
+              <p className="text-gray-600 text-sm mb-4 line-clamp-3">{article.content}</p>
 
               {/* Meta Information */}
               <div className="flex items-center justify-between text-xs text-gray-500 mb-4">

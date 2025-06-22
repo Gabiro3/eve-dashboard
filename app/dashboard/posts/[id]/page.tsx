@@ -196,6 +196,65 @@ export default function PostViewPage() {
       return true;
     return false;
   };
+  // Function to process and format content
+function processContent(content: string): string {
+  // Handle different content formats
+  let processedContent = content
+
+  // If content appears to be plain text with line breaks, convert to HTML
+  if (!content.includes("<") && content.includes("\n")) {
+    processedContent = content
+      .split("\n\n")
+      .map((paragraph) => paragraph.trim())
+      .filter((paragraph) => paragraph.length > 0)
+      .map((paragraph) => `<p>${paragraph.replace(/\n/g, "<br>")}</p>`)
+      .join("")
+  }
+
+  // Ensure proper paragraph spacing
+  processedContent = processedContent
+    .replace(/<p>\s*<\/p>/g, "") // Remove empty paragraphs
+    .replace(/<p>/g, '<p class="mb-6 leading-relaxed text-gray-700">')
+
+  // Style headings
+  processedContent = processedContent
+    .replace(/<h1>/g, '<h1 class="text-3xl font-bold text-gray-900 mt-8 mb-4 leading-tight">')
+    .replace(/<h2>/g, '<h2 class="text-2xl font-semibold text-gray-900 mt-8 mb-4 leading-tight">')
+    .replace(/<h3>/g, '<h3 class="text-xl font-semibold text-gray-900 mt-6 mb-3 leading-tight">')
+    .replace(/<h4>/g, '<h4 class="text-lg font-semibold text-gray-900 mt-6 mb-3 leading-tight">')
+
+  // Style lists
+  processedContent = processedContent
+    .replace(/<ul>/g, '<ul class="list-disc list-inside mb-6 space-y-2 text-gray-700 ml-4">')
+    .replace(/<ol>/g, '<ol class="list-decimal list-inside mb-6 space-y-2 text-gray-700 ml-4">')
+    .replace(/<li>/g, '<li class="leading-relaxed">')
+
+  // Style links
+  processedContent = processedContent.replace(
+    /<a /g,
+    '<a class="text-pink-600 hover:text-pink-700 underline font-medium" ',
+  )
+
+  // Style blockquotes
+  processedContent = processedContent
+    .replace(/<blockquote>/g, '<blockquote class="border-l-4 border-pink-200 pl-6 py-4 mb-6 bg-pink-50 rounded-r-lg">')
+    .replace(
+      /<blockquote([^>]*)>/g,
+      '<blockquote$1 class="border-l-4 border-pink-200 pl-6 py-4 mb-6 bg-pink-50 rounded-r-lg italic text-gray-700">',
+    )
+
+  // Style code blocks
+  processedContent = processedContent
+    .replace(/<pre>/g, '<pre class="bg-gray-100 rounded-lg p-4 mb-6 overflow-x-auto">')
+    .replace(/<code>/g, '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono">')
+
+  // Style images
+  processedContent = processedContent.replace(/<img /g, '<img class="rounded-lg shadow-sm my-6 max-w-full h-auto" ')
+
+  return processedContent
+}
+
+
 
   if (loading) {
     return (
@@ -286,7 +345,7 @@ export default function PostViewPage() {
                         )}
                         <Badge variant="outline">{post.category.name}</Badge>
                       </div>
-                      <CardTitle className="text-3xl mb-2">
+                      <CardTitle className="text-1xl mb-2">
                         {post.title}
                       </CardTitle>
                       {post.cover_image && (
@@ -345,10 +404,14 @@ export default function PostViewPage() {
 
                 <CardContent>
                   {/* Content */}
-                  <div
-                    className="prose prose-lg max-w-none"
-                    dangerouslySetInnerHTML={{ __html: post.content }}
-                  />
+                  <div className="max-w-none">
+          <div
+            className="article-content text-lg leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: processContent(post.content) }}
+          />
+        </div>
+
+
 
                   {/* Tags */}
                   {post.tags && post.tags.length > 0 && (

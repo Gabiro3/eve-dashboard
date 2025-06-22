@@ -142,8 +142,8 @@ export function PostList({ posts, userRole, onEdit, onDelete, onReview }: PostLi
                     <div>
                       <div className="font-medium">{post.title}</div>
                       <div className="text-sm text-muted-foreground line-clamp-1">
-  {post.content}
-</div>
+                        {post.content}
+                      </div>
 
                       {post.is_featured && (
                         <Badge variant="outline" className="mt-1">
