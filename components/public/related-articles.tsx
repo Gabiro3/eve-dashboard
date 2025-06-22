@@ -7,7 +7,7 @@ interface RelatedArticle {
   id: string
   title: string
   excerpt: string
-  featured_image_url: string | null
+  cover_image: string | null
   slug: string
   estimated_read_time: number | null
   read_count: number
@@ -36,7 +36,7 @@ export function RelatedArticles({ articles }: RelatedArticlesProps) {
               {/* Article Image */}
               <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden">
                 <Image
-                  src={article.featured_image_url || "/placeholder.svg?height=96&width=96"}
+                  src={article.cover_image || "/placeholder.svg?height=96&width=96"}
                   alt={article.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-200"

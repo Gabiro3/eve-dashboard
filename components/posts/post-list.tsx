@@ -17,6 +17,7 @@ export interface Post {
   title: string
   excerpt: string
   status: "draft" | "pending_review" | "approved" | "rejected"
+  content: string
   author: {
     name: string
     title: string
@@ -140,7 +141,10 @@ export function PostList({ posts, userRole, onEdit, onDelete, onReview }: PostLi
                   <TableCell>
                     <div>
                       <div className="font-medium">{post.title}</div>
-                      <div className="text-sm text-muted-foreground line-clamp-1">{post.excerpt}</div>
+                      <div className="text-sm text-muted-foreground line-clamp-1">
+  {post.content}
+</div>
+
                       {post.is_featured && (
                         <Badge variant="outline" className="mt-1">
                           Featured
