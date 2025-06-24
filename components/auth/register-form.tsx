@@ -49,7 +49,7 @@ export function RegisterForm() {
 
     try {
       // Check if email already exists in auth
-      const { data: existingUser } = await supabase.from("users").select("id").eq("email", formData.email).single()
+      const { data: existingUser } = await supabase.from("admin_users").select("id").eq("email", formData.email).single()
 
       if (existingUser) {
         throw new Error("An account with this email already exists.")
