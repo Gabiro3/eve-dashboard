@@ -95,78 +95,96 @@ export function AccessRequests() {
   }
 
   const confirmApprove = async () => {
-    if (!selectedRequest) return
+  if (!selectedRequest) return;
 
-    try {
-      // 1. Create auth user
-      const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
+  try {
+    // 1. Try to fetch existing auth user by email
+    const { data: existingUsers, error: fetchError } = await supabase
+  .from('auth.users')
+  .select('id')
+  .eq('email', selectedRequest.email)
+  .limit(1)
+  .single();
+
+
+    if (fetchError) throw fetchError;
+
+    let authUser;
+    if (existingUsers) {
+      authUser = existingUsers;
+    } else {
+      // 2. Create new auth user
+      const { data, error: createError } = await supabase.auth.admin.createUser({
         email: selectedRequest.email,
         password: password,
         email_confirm: true,
-      })
+      });
 
-      if (authError) throw authError
-
-      // 2. Create doctor record if needed
-      let doctorId = null
-      if (selectedRequest.role === "doctor" && selectedRequest.specialization) {
-        const { data: doctor, error: doctorError } = await supabase
-          .from("doctors")
-          .insert({
-            name: selectedRequest.name,
-            title: "Dr.",
-            specialization: selectedRequest.specialization,
-            bio: selectedRequest.bio,
-            contact_email: selectedRequest.email,
-          })
-          .select()
-          .single()
-
-        if (doctorError) throw doctorError
-        doctorId = doctor.id
-      }
-
-      // 3. Create user profile
-      const { error: userError } = await supabase.from("admin_users").insert({
-        id: authUser.user.id,
-        email: selectedRequest.email,
-        name: selectedRequest.name,
-        role: selectedRequest.role,
-        doctor_id: doctorId,
-        is_active: true,
-      })
-
-      if (userError) throw userError
-
-      // 4. Update request status
-      const { error: updateError } = await supabase
-        .from("account_requests")
-        .update({
-          status: "approved",
-          review_notes: reviewNotes,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", selectedRequest.id)
-
-      if (updateError) throw updateError
-
-      toast({
-        title: "Request approved",
-        description: `${selectedRequest.name} has been granted access as a ${selectedRequest.role}`,
-        variant: "default",
-      })
-
-      setApproveDialogOpen(false)
-      await loadRequests()
-    } catch (error: any) {
-      console.error("Error approving request:", error)
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      })
+      if (createError) throw createError;
+      authUser = data.user;
     }
+
+    // 3. Create doctor record if needed
+    let doctorId = null;
+    if (selectedRequest.role === "doctor" && selectedRequest.specialization) {
+      const { data: doctor, error: doctorError } = await supabase
+        .from("doctors")
+        .insert({
+          name: selectedRequest.name,
+          title: "Dr.",
+          specialization: selectedRequest.specialization,
+          bio: selectedRequest.bio,
+          contact_email: selectedRequest.email,
+        })
+        .select()
+        .single();
+
+      if (doctorError) throw doctorError;
+      doctorId = doctor.id;
+    }
+
+    // 4. Insert into admin_users
+    const { error: userError } = await supabase.from("admin_users").insert({
+      id: authUser.id,
+      email: selectedRequest.email,
+      name: selectedRequest.name,
+      role: selectedRequest.role,
+      doctor_id: doctorId,
+      is_active: true,
+    });
+
+    if (userError) throw userError;
+
+    // 5. Update account_requests
+    const { error: updateError } = await supabase
+      .from("account_requests")
+      .update({
+        status: "approved",
+        review_notes: reviewNotes,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", selectedRequest.id);
+
+    if (updateError) throw updateError;
+
+    toast({
+      title: "Request approved",
+      description: `${selectedRequest.name} has been granted access as a ${selectedRequest.role}`,
+      variant: "default",
+    });
+
+    setApproveDialogOpen(false);
+    await loadRequests();
+  } catch (error: any) {
+    console.error("Error approving request:", error);
+    toast({
+      title: "Error",
+      description: error.message,
+      variant: "destructive",
+    });
   }
+};
+
 
   const confirmReject = async () => {
     if (!selectedRequest) return
