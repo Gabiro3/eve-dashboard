@@ -16,14 +16,15 @@ import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Save, Eye, X, Loader2 } from "lucide-react"
 import { supabase } from "@/lib/supabase"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 import Link from "next/link"
+import { RichTextEditor } from "@/components/editor/rich-text-editor"
 
 interface PostFormData {
   title: string
   content: string
   excerpt: string
-  featured_image_url: string
+  cover_image: string
   category_id: string
   is_featured: boolean
   tags: string[]
@@ -36,7 +37,7 @@ interface Category {
 }
 
 export default function EditPostPage() {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<any>(null);
   const router = useRouter()
   const params = useParams()
   const { toast } = useToast()
@@ -45,7 +46,7 @@ export default function EditPostPage() {
     title: "",
     content: "",
     excerpt: "",
-    featured_image_url: "",
+    cover_image: "",
     category_id: "",
     is_featured: false,
     tags: [],
@@ -54,45 +55,49 @@ export default function EditPostPage() {
 
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
-  const { id } = useParams() as { id: string }
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [tagInput, setTagInput] = useState("")
   const [originalPost, setOriginalPost] = useState<any>(null)
-  const checkUser = async () => {
-        try {
-          const {
-            data: { user: authUser },
-          } = await supabase.auth.getUser()
-    
-          if (!authUser) {
-            router.push("/login")
-            return
-          }
-  
-          const { data: profile, error } = await supabase
-            .from("admin_users")
-            .select(`
-              *`)
-            .eq("id", authUser.id)
-            .single()
-    
-          if (profile) {
-            setUser(profile)
-          }
-        } catch (error) {
-          console.error("Error checking user:", error)
-          router.push("/login")
-        } finally {
-          setLoading(false)
-        }
-      }
 
   useEffect(() => {
     checkUser()
     loadCategories()
-    loadPost(id)
+    if (params.id) {
+      loadPost(params.id as string)
+    }
   }, [params.id])
+
+  const checkUser = async () => {
+    try {
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
+
+      if (!authUser) {
+        router.push("/login");
+        return;
+      }
+
+      const { data: profile, error } = await supabase
+        .from("admin_users")
+        .select(
+          `
+                    *`
+        )
+        .eq("id", authUser.id)
+        .single();
+
+      if (profile) {
+        setUser(profile);
+      }
+    } catch (error) {
+      console.error("Error checking user:", error);
+      router.push("/login");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadPost = async (postId: string) => {
     try {
@@ -110,13 +115,13 @@ export default function EditPostPage() {
         return
       }
 
+
       setOriginalPost(data)
-      console.log("Loaded post data:", data)
       setFormData({
         title: data.title || "",
         content: data.content || "",
         excerpt: data.excerpt || "",
-        featured_image_url: data.featured_image_url || "",
+        cover_image: data.cover_image || "",
         category_id: data.category_id || "",
         is_featured: data.is_featured || false,
         tags: data.tags || [],
@@ -163,7 +168,7 @@ export default function EditPostPage() {
         data: { publicUrl },
       } = supabase.storage.from("articles").getPublicUrl(filePath)
 
-      setFormData((prev) => ({ ...prev, featured_image_url: publicUrl }))
+      setFormData((prev) => ({ ...prev, cover_image: publicUrl }))
 
       toast({
         title: "Success",
@@ -215,7 +220,7 @@ export default function EditPostPage() {
       }
 
       // Calculate estimated read time
-      const wordCount = formData.content.split(/\s+/).length
+      const wordCount = formData.content.replace(/<[^>]*>/g, "").split(/\s+/).length
       const estimatedReadTime = Math.ceil(wordCount / 200)
 
       // Generate excerpt if not provided
@@ -225,7 +230,7 @@ export default function EditPostPage() {
         title: formData.title.trim(),
         content: formData.content,
         excerpt,
-        cover_image: formData.featured_image_url || null,
+        cover_image: formData.cover_image || null,
         category_id: formData.category_id,
         is_featured: formData.is_featured,
         tags: formData.tags,
@@ -255,11 +260,10 @@ export default function EditPostPage() {
     }
   }
 
-  if (loading) {
+  if (!user) {
     return (
       <>
         <div className="min-h-screen bg-gray-50 flex">
-          <Sidebar userRole={user?.role || "writer"} />
           <div className="flex-1 flex flex-col">
             <main className="flex-1 p-6">
               <div className="max-w-4xl mx-auto">
@@ -281,6 +285,7 @@ export default function EditPostPage() {
       <div className="min-h-screen bg-gray-50 flex">
         <Sidebar userRole={user?.role || "writer"} />
         <div className="flex-1 flex flex-col">
+          <Header user={user!} />
           <main className="flex-1 p-6">
             <div className="max-w-4xl mx-auto space-y-6">
               {/* Header */}
@@ -325,7 +330,7 @@ export default function EditPostPage() {
                             id="title"
                             value={formData.title}
                             onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-                            placeholder={originalPost.title || "Enter post title"}
+                            placeholder="Enter post title"
                             required
                           />
                         </div>
@@ -342,13 +347,12 @@ export default function EditPostPage() {
                         </div>
 
                         <div>
-                          <Label htmlFor="content">Content *</Label>
-                          <Textarea
-                            id="content"
+                          <RichTextEditor
+                            label="Content"
                             value={formData.content}
-                            onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
-                            placeholder="Write your post content here..."
-                            rows={15}
+                            onChange={(content) => setFormData((prev) => ({ ...prev, content }))}
+                            placeholder="Write your post content here. You can paste formatted content from Google Docs, Word, or other sources and the formatting will be preserved."
+                            height={500}
                             required
                           />
                         </div>
@@ -363,10 +367,10 @@ export default function EditPostPage() {
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-4">
-                          {formData.featured_image_url && (
+                          {formData.cover_image && (
                             <div className="relative">
                               <img
-                                src={formData.featured_image_url || "/placeholder.svg"}
+                                src={formData.cover_image || "/placeholder.svg"}
                                 alt="Featured image"
                                 className="w-full h-48 object-cover rounded-lg"
                               />
@@ -375,7 +379,7 @@ export default function EditPostPage() {
                                 variant="destructive"
                                 size="sm"
                                 className="absolute top-2 right-2"
-                                onClick={() => setFormData((prev) => ({ ...prev, featured_image_url: "" }))}
+                                onClick={() => setFormData((prev) => ({ ...prev, cover_image: "" }))}
                               >
                                 <X className="h-4 w-4" />
                               </Button>
