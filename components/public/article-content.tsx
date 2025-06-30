@@ -134,7 +134,7 @@ export function ArticleContent({ article }: ArticleContentProps) {
             <div className="flex items-center gap-4">
               {article.author.profile_image_url ? (
                 <Image
-                  src={article.author.profile_image_url || "/placeholder.svg"}
+                  src='/logo.png'
                   alt={article.author.name}
                   width={56}
                   height={56}
@@ -146,7 +146,7 @@ export function ArticleContent({ article }: ArticleContentProps) {
                 </div>
               )}
               <div>
-                <div className="font-semibold text-gray-900 text-lg">{article.author.name}</div>
+                <div className="font-semibold text-gray-900 text-lg">Eve Health Team</div>
                 <div className="text-sm text-gray-600">{article.author.title}</div>
               </div>
             </div>
