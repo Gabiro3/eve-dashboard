@@ -11,7 +11,7 @@ interface ArticleContentProps {
     title: string
     content: string
     excerpt?: string
-    featured_image_url: string | null
+    cover_image: string | null
     created_at: string
     updated_at: string
     estimated_read_time: number | null
@@ -97,11 +97,11 @@ export function ArticleContent({ article }: ArticleContentProps) {
       />
 
       <article className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        {/* Featured Image */}
-        {article.featured_image_url && (
+        {/* Cover Image */}
+        {article.cover_image && (
           <div className="relative h-64 md:h-96 overflow-hidden">
             <Image
-              src={article.featured_image_url || "/placeholder.svg"}
+              src={article.cover_image || "/placeholder.svg"}
               alt={article.title}
               fill
               className="object-cover transition-transform duration-300 hover:scale-105"
