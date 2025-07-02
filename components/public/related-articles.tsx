@@ -31,7 +31,7 @@ export function RelatedArticles({ articles }: RelatedArticlesProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {articles.map((article) => (
-          <Link key={article.id} href={`/articles/${article.slug}`} className="group block">
+          <Link key={article.id} href={`/articles/${article.id}`} className="group block">
             <article className="flex gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
               {/* Article Image */}
               <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden">
